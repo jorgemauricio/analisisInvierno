@@ -82,7 +82,7 @@ def main():
 		longitudAnotacion = (LONG_MAX + LONG_MIN) / 2
 		plt.annotate('@2018 INIFAP', xy=(longitudAnotacion,latitudAnotacion), xycoords='figure fraction', xytext=(0.45,0.45), color='g')
 		plt.colorbar()
-		temp = f"data/maps/Tmin_{i}.png"
+		temp = f"maps/Tmin_{i}.png"
 		plt.savefig(temp, dpi=300)
 
 def generarAnio(f):
