@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
+plt.style.use('ggplot')
 
 def main():
 	# read csv
@@ -34,8 +35,13 @@ def main():
 	# filtrar información
 	data = data.loc[data['Estación'] == 'Invierno']
 
+	# filtrar información aberrante tmin menor
+	data = data.loc[data['tmin'] >= -10]
+
+	# filtrar información aberrante tmin mayor
+	data = data.loc[data['tmin'] <= 15]
+
 	# media de tmin anual
-	plt.style.use('ggplot')
 	data.groupby('Año').mean()['tmin']
 
 	# generar datos agrupados por años
@@ -62,7 +68,7 @@ def main():
 	for i in data['Año'].unique():
 		# configuración del mapas
 		plt.clf()
-		fig = plt.figure(figsize=(8,4))
+		fig = plt.figure(figsize=(6,4))
 		m = Basemap(projection='mill',llcrnrlat=LAT_MIN,urcrnrlat=LAT_MAX,llcrnrlon=LONG_MIN,urcrnrlon=LONG_MAX,resolution='h')
 
 		# filtrar información por años
@@ -75,12 +81,13 @@ def main():
 		m.readshapefile('shapes/Estados', 'Estados')
 
 		# agregar puntos
-		m.scatter(x,y, latlon=True, c=z, cmap='Blues_r')
+		m.scatter(x,y, latlon=True, s=3,c=z, cmap='Blues_r')
 
 		# crear anotación
 		latitudAnotacion = (LAT_MAX + LAT_MIN) / 2
 		longitudAnotacion = (LONG_MAX + LONG_MIN) / 2
-		plt.annotate('@2018 INIFAP', xy=(longitudAnotacion,latitudAnotacion), xycoords='figure fraction', xytext=(0.45,0.45), color='g')
+		plt.annotate('@2018 INIFAP', xy=(longitudAnotacion,latitudAnotacion), xycoords='figure fraction', xytext=(0.25,0.55), color='g')
+		plt.title(f"Temperatura Mínima Media\n registrada en el Invierno del {i}")
 		plt.colorbar()
 		temp = f"maps/Tmin_{i}.png"
 		plt.savefig(temp, dpi=300)
